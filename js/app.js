@@ -1,7 +1,10 @@
 //Global variable
 
 var minEnemySpeed = 100,    //enemy's max speed
-    maxEnemySpeed = 300;    //enemy's minh speed
+    maxEnemySpeed = 300,    //enemy's minh speed
+    numTiles = 3,           //number of tiles where enemies can move
+    xStep = 100,
+    yStep = 82;
 
 //store global state for whole game
 var Game = function(){
@@ -19,6 +22,34 @@ var Game = function(){
     // this.allEnemies = [enemy1, enemy2, enemy3];
     this.generatePlayer();
     // this.player = new Player();
+
+    var that = this;
+
+    // This listens for key presses and sends the keys to your
+    // Player.handleInput() method. You don't need to modify this.
+    document.addEventListener('keyup', function(e) {
+        var allowedKeys = {
+          32: 'spacebar',
+          37: 'left',
+          38: 'up',
+          39: 'right',
+          40: 'down',
+          65: 'left',       // A
+          68: 'right',      // D
+          83: 'down',       // S
+          80: 'pause',      //p
+          82: 'restart',    //r
+          87: 'up'          // W
+      }
+
+        that.player.handleInput(allowedKeys[e.keyCode]);
+
+        if (e.keyCode in allowedKeys){
+        e.preventDefault();
+      }
+
+    });
+
 }
 
 Game.prototype.generateEnemy = function(){
@@ -64,7 +95,6 @@ var Enemy = function() {
 
     this.speed = this.randomInt(minEnemySpeed, maxEnemySpeed);
 };
-
 // Set Enemy to inherit properties from Drawable
 Enemy.prototype = new Drawable();
 
@@ -78,7 +108,7 @@ Enemy.prototype.update = function(dt) {
 
     if (this.x > 505) {
         this.x = -101;
-        this.y = this.enemyY[Math.round(Math.random()*2)];  // bug can start in any y position
+        this.y = this.enemyY[this.randomInt(0,2)];  // bug can start in any y position
     };
 };
 
@@ -109,14 +139,13 @@ var Player = function(){
     this.sprite = this.pImages[0];
     this.playerX = [100,200,300,400];
     this.playerY = [300,400];
-    this.x = 100;   //this value
-    this.y = 320;   //this value
+    this.x = 200;   //this value
+    this.y = 400;   //this value
 };
-
 // Set Enemy to inherit properties from Drawable
 Player.prototype = new Drawable();
 
-Player.prototype.update = function(dt) {
+Player.prototype.update = function() {
     //multiply any movement by the dt parameter
 };
 
@@ -125,23 +154,34 @@ Player.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Player.prototype.handleInput = function() {
-
+Player.prototype.handleInput = function(key) {
+    switch(key){
+        case 'up':
+            if(this.y > 0){
+                this.y -= yStep;
+                console.log("x :" + this.x + "y: " + this.y);
+            }
+            break;
+        case 'down':
+            if(this.y < 400){
+                this.y += yStep;
+                console.log("x :" + this.x + "y: " + this.y);
+            }
+            break;
+        case 'left':
+            if(this.x > 0){
+                this.x -= xStep;
+                console.log("x :" + this.x + "y: " + this.y);
+            }
+            break;
+        case 'right':
+            if(this.x < 400){
+                this.x += xStep;
+                console.log("x :" + this.x + "y: " + this.y);
+            }
+            break;
+    }
 };
 
 
 
-
-
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
-
-    player.handleInput(allowedKeys[e.keyCode]);
-});
