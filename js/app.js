@@ -1,16 +1,49 @@
+//Global variable
+
+var minEnemySpeed = 100,    //enemy's max speed
+    maxEnemySpeed = 300;    //enemy's minh speed
+
 //store global state for whole game
 var Game = function(){
-    this.minEnemySpeed = 100    //enemy's max speed
-    this.maxEnemySpeed = 300    //enemy's minh speed
+    //this.minEnemySpeed = 100    //enemy's max speed
+    //this.maxEnemySpeed = 300    //enemy's minh speed
 
-    // Now instantiate your objects.
+    // Now instantiate enemies and player.
     // Place all enemy objects in an array called allEnemies
     // Place the player object in a variable called player
-    var enemy1 = new Enemy();
-    var enemy2 = new Enemy();
-    var enemy3 = new Enemy();
-    this.allEnemies = [enemy1, enemy2, enemy3];
+    this.allEnemies=[];
+    this.generateEnemy();
+    //var enemy1 = new Enemy();
+    // var enemy2 = new Enemy();
+    // var enemy3 = new Enemy();
+    // this.allEnemies = [enemy1, enemy2, enemy3];
+    this.generatePlayer();
+    // this.player = new Player();
+}
+
+Game.prototype.generateEnemy = function(){
+    for (i=0; i<4; i++){
+        var enemy = new Enemy();
+        this.allEnemies.push(enemy);
+    };
+};
+
+Game.prototype.generatePlayer = function(){
     this.player = new Player();
+}
+
+//Drawable contains common elements for Enemy and Player
+var Drawable = function(){
+    this.sprite;
+
+    this.x;
+    this.y;
+
+    this.speed;
+
+    this.randomInt = function(min, max){
+        return Math.floor(Math.random()*(max-min+1) + min);
+    }
 }
 
 // Enemies our player must avoid
@@ -26,10 +59,14 @@ var Enemy = function() {
 
     this.x = -101; // test value
 
-    this.y = this.enemyY[Math.round(Math.random()*2)];
+    //set random y position for enemy
+    this.y = this.enemyY[this.randomInt(0,2)];
 
-    this.speed = 0;
+    this.speed = this.randomInt(minEnemySpeed, maxEnemySpeed);
 };
+
+// Set Enemy to inherit properties from Drawable
+Enemy.prototype = new Drawable();
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -44,6 +81,12 @@ Enemy.prototype.update = function(dt) {
         this.y = this.enemyY[Math.round(Math.random()*2)];  // bug can start in any y position
     };
 };
+
+//Generate random number between minNum and maxNum
+// Enemy.prototype.randomInt = function(min, max){
+//     var ranNum = Math.floor(Math.random()*(max-min+1) + min);
+//     return ranNum;
+// }
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -68,7 +111,10 @@ var Player = function(){
     this.playerY = [300,400];
     this.x = 100;   //this value
     this.y = 320;   //this value
-}
+};
+
+// Set Enemy to inherit properties from Drawable
+Player.prototype = new Drawable();
 
 Player.prototype.update = function(dt) {
     //multiply any movement by the dt parameter
