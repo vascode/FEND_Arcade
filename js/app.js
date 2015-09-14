@@ -23,6 +23,7 @@ var Game = function(){
     this.generatePlayer();
     // this.player = new Player();
 
+    // Assign "this" to new var "that" to use the object in a nested "keyup" function below.
     var that = this;
 
     // This listens for key presses and sends the keys to your
@@ -62,6 +63,15 @@ Game.prototype.generateEnemy = function(){
 Game.prototype.generatePlayer = function(){
     this.player = new Player();
 }
+
+//if collision between enemy and player -> player goes back to initial place
+Game.prototype.checkCollisions = function(){
+    //console.log("checkCollisions");
+    for (var i = 0; i < this.allEnemies.length; i++){
+        if(Math.abs(this.player.x -this.allEnemies[i].x) < 50 && Math.abs(this.player.y - this.allEnemies[i].y) < 50)
+            this.player.reset();
+    }
+};
 
 //Drawable contains common elements for Enemy and Player
 var Drawable = function(){
@@ -153,6 +163,12 @@ Player.prototype.update = function() {
 Player.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
+//player goes back to original point
+Player.prototype.reset = function(){
+    this.x = 200;
+    this.y = 400;
+}
 
 Player.prototype.handleInput = function(key) {
     switch(key){
