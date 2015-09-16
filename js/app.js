@@ -8,20 +8,11 @@ var minEnemySpeed = 100,    //enemy's max speed
 
 //store global state for whole game
 var Game = function(){
-    //this.minEnemySpeed = 100    //enemy's max speed
-    //this.maxEnemySpeed = 300    //enemy's minh speed
 
-    // Now instantiate enemies and player.
-    // Place all enemy objects in an array called allEnemies
-    // Place the player object in a variable called player
+    //instantiate enemies and player.
     this.allEnemies=[];
     this.generateEnemy();
-    //var enemy1 = new Enemy();
-    // var enemy2 = new Enemy();
-    // var enemy3 = new Enemy();
-    // this.allEnemies = [enemy1, enemy2, enemy3];
     this.generatePlayer();
-    // this.player = new Player();
 
     // Assign "this" to new var "that" to use the object in a nested "keyup" function below.
     var that = this;
@@ -30,6 +21,7 @@ var Game = function(){
     // Player.handleInput() method. You don't need to modify this.
     document.addEventListener('keyup', function(e) {
         var allowedKeys = {
+          13: 'enter',
           32: 'spacebar',
           37: 'left',
           38: 'up',
@@ -68,8 +60,13 @@ Game.prototype.generatePlayer = function(){
 Game.prototype.checkCollisions = function(){
     //console.log("checkCollisions");
     for (var i = 0; i < this.allEnemies.length; i++){
-        if(Math.abs(this.player.x -this.allEnemies[i].x) < 50 && Math.abs(this.player.y - this.allEnemies[i].y) < 50)
+        if(Math.abs(this.player.x -this.allEnemies[i].x) < 50 && Math.abs(this.player.y - this.allEnemies[i].y) < 50){
             this.player.reset();
+            if (this.player.life > 0){
+                this.player.life--;
+                this.player.renderLife();
+            }
+        }
     }
 };
 
@@ -95,6 +92,8 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+
+
 
     this.enemyY = [60,145,230];
 
@@ -151,6 +150,9 @@ var Player = function(){
     this.playerY = [300,400];
     this.x = 200;   //this value
     this.y = 400;   //this value
+    this.score = 0;
+    this.life = 3;
+    this.lifeImg = 'images/Heart-small.png';
 };
 // Set Enemy to inherit properties from Drawable
 Player.prototype = new Drawable();
@@ -161,13 +163,39 @@ Player.prototype.update = function() {
 
 // Draw player on the screen, required method for game
 Player.prototype.render = function(){
+    this.checkReached();
+    this.renderScore();
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    this.renderLife();
 };
 
 //player goes back to original point
 Player.prototype.reset = function(){
     this.x = 200;
     this.y = 400;
+};
+
+Player.prototype.checkReached = function(){
+    if (this.y < 0){
+        this.score++;
+        this.reset();
+    }
+};
+
+Player.prototype.renderLife = function(){
+    //document.getElementById("life").innerHTML = 'Life : ' + this.life;
+
+    var imgX = 470;
+    for (var i=0; i<this.life; i++){
+        ctx.drawImage(Resources.get(this.lifeImg), imgX, 0);
+        imgX -= 40;
+    }
+    //ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+
+Player.prototype.renderScore = function(){
+    document.getElementById("score").innerHTML = 'Score : ' + this.score;
 }
 
 Player.prototype.handleInput = function(key) {
@@ -198,6 +226,4 @@ Player.prototype.handleInput = function(key) {
             break;
     }
 };
-
-
 

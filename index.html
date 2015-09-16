@@ -2,10 +2,52 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Effective JavaScript: Frogger</title>
+    <title>Catch Fishes</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <body>
+	<div id="container" class="row">
+		<h2 class="text-center"><u>Let's catch some fishes in the river!  Let's Move!</u></h2>
+		<br><br>
+
+		<div class="col-md-4 col-sm-12" id="description">
+			<h2 class="left-margin">Control keys :  </h2>
+			<ul>
+				<li><span class="control left">⇦</span> Move left</li>
+				<li><span class="control right">⇨</span> Move right</li>
+				<li><span class="control up">⇧</span> Move up</li>
+				<li><span class="control down">⇩</span> Move down</li>
+				<li><span class="control enter">&#9166</span> Start</li>
+				<li><span class="control pause">p</span> Pause</li>
+				<li><span class="control quit">q</span> Quit</li>
+				<li><span class="boxed">spacebar</span> Start</li>
+			</ul>
+			<hr><br>
+			<h2 class="left-margin">Items to obtain :  </h2>
+			<ul>
+				<li>Blue gem : slow down enemies temporarily</li>
+				<li>Green gem : + 2 points</li>
+				<li>Orange gem : + 3 points</li>
+				<li>Heart : +1 life</li>
+			</ul>
+			<hr>
+			<br><br>
+		</div>
+		<div class="col-md-8 col-sm-12">
+			<div id="score"></div>
+			<div id="timer"></div>
+			<div id="game-board"></div>
+
+			<button id="restart" onClick="history.go(0)">Restart</button>
+
+		</div>
+
+	</div>
+
+
+
+
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
