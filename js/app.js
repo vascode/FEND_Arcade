@@ -13,6 +13,7 @@ var Game = function(){
     this.allEnemies=[];
     this.generateEnemy();
     this.generatePlayer();
+    //this.generateLife();
 
     // Assign "this" to new var "that" to use the object in a nested "keyup" function below.
     var that = this;
@@ -54,6 +55,7 @@ Game.prototype.generateEnemy = function(){
 
 Game.prototype.generatePlayer = function(){
     this.player = new Player();
+    this.player.renderScore();
 }
 
 //if collision between enemy and player -> player goes back to initial place
@@ -64,10 +66,29 @@ Game.prototype.checkCollisions = function(){
             this.player.reset();
             if (this.player.life > 0){
                 this.player.life--;
-                this.player.renderLife();
             }
         }
     }
+};
+
+Game.prototype.gameOver = function(){
+    document.getElementById("score").style.display = 'none';
+    document.getElementById("timer").style.display = 'none';
+    document.getElementById("game-board").style.display = 'none';
+    document.getElementById("restart").style.display = 'none';
+    /*var scoreDiv = document.getElementById("score");
+    scoreDiv.parentNode.removeChild(scoreDiv);
+    var timerDiv = document.getElementById("timer");
+    timerDiv.parentNode.removeChild(timerDiv);
+    var gameBoardDiv = document.getElementById("game-board");
+    gameBoardDiv.parentNode.removeChild(gameBoardDiv);
+
+    var restartButton = document.getElementById("restart");
+    restartButton.parentNode.removeChild(restartButton);
+*/
+    document.getElementById("game-over").style.display = 'inline-block';
+    document.getElementById('game-over').innerHTML = 'Game Over';
+
 };
 
 //Drawable contains common elements for Enemy and Player
@@ -150,6 +171,7 @@ var Player = function(){
     this.playerY = [300,400];
     this.x = 200;   //this value
     this.y = 400;   //this value
+
     this.score = 0;
     this.life = 3;
     this.lifeImg = 'images/Heart-small.png';
@@ -164,9 +186,7 @@ Player.prototype.update = function() {
 // Draw player on the screen, required method for game
 Player.prototype.render = function(){
     this.checkReached();
-    this.renderScore();
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    this.renderLife();
 };
 
 //player goes back to original point
@@ -178,21 +198,23 @@ Player.prototype.reset = function(){
 Player.prototype.checkReached = function(){
     if (this.y < 0){
         this.score++;
+        this.renderScore();
         this.reset();
     }
 };
 
 Player.prototype.renderLife = function(){
-    //document.getElementById("life").innerHTML = 'Life : ' + this.life;
+    if (this.life === 0){
+        game.gameOver();
+    }
+
 
     var imgX = 470;
     for (var i=0; i<this.life; i++){
         ctx.drawImage(Resources.get(this.lifeImg), imgX, 0);
         imgX -= 40;
     }
-    //ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-
 
 Player.prototype.renderScore = function(){
     document.getElementById("score").innerHTML = 'Score : ' + this.score;

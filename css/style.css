@@ -1,5 +1,19 @@
 body {
 	overflow-x: hidden;
+	font-size: 15px;
+}
+
+h1 u {
+	font-family: 'Maven Pro', sans-serif;
+	font-size: 50px;
+	font-weight: 900;
+}
+
+button {
+    display: inline-block;
+	border: none;
+    padding: 0;
+
 }
 
 .text-center {
@@ -36,14 +50,19 @@ body {
 
 li {
 	font-size: 20px;
+	font-family: 'Maven Pro', sans-serif;
 }
 
-
-#life, #score {
+#score {
 	font-size: 20px;
-	display: inline-block;
+	display: none;
 	margin: auto auto auto 50px;
 }
+
+#restart, #game-over {
+	display: none;
+}
+
 
 
 /*

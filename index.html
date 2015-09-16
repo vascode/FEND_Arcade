@@ -5,10 +5,12 @@
     <title>Catch Fishes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Maven+Pro:400,900,500' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Play:400,700' rel='stylesheet' type='text/css'>
 </head>
 <body>
 	<div id="container" class="row">
-		<h2 class="text-center"><u>Let's catch some fishes in the river!  Let's Move!</u></h2>
+		<h1 class="text-center"><u>Let's catch some fishes in the river!</u></h1>
 		<br><br>
 
 		<div class="col-md-4 col-sm-12" id="description">
@@ -21,7 +23,7 @@
 				<li><span class="control enter">&#9166</span> Start</li>
 				<li><span class="control pause">p</span> Pause</li>
 				<li><span class="control quit">q</span> Quit</li>
-				<li><span class="boxed">spacebar</span> Start</li>
+				<li><span class="control boxed">spacebar</span> Start</li>
 			</ul>
 			<hr><br>
 			<h2 class="left-margin">Items to obtain :  </h2>
@@ -35,19 +37,19 @@
 			<br><br>
 		</div>
 		<div class="col-md-8 col-sm-12">
+			<!--<div class="image">-->
+			<!--<input type="image" src="logg.png" name="saveForm" class="btTxt submit" id="saveForm" />-->
+			<button id="ImgButton"><img class="mainImg" src ='images/startImg.png' alt="main image"></button>
+
 			<div id="score"></div>
 			<div id="timer"></div>
 			<div id="game-board"></div>
-
 			<button id="restart" onClick="history.go(0)">Restart</button>
 
+			<div id="game-over"></div>
+
 		</div>
-
 	</div>
-
-
-
-
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>

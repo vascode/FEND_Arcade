@@ -68,7 +68,16 @@ var Engine = (function(global) {
     function init() {
         //reset();
         lastTime = Date.now();
-        main();
+        doc.getElementById("ImgButton").onclick = function(){
+            var startButton = doc.getElementById("ImgButton");
+            startButton.parentNode.removeChild(startButton);
+
+            doc.getElementById("score").style.display = 'inline-block';
+            doc.getElementById("restart").style.display = 'inline-block';
+
+            main();
+
+        }
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -157,6 +166,7 @@ var Engine = (function(global) {
         });
 
         game.player.render();
+        game.player.renderLife();
     }
 
     /* This function does nothing but it could have been a good place to
