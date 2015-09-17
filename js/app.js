@@ -97,6 +97,8 @@ Game.prototype.gameOver = function(){
     var scoreMessage = "Your score is " + this.player.score;
     document.getElementById('game-over-text').innerHTML = '<p>Game Over<br><br></p>' + scoreMessage;
 
+    window.cancelAnimationFrame(AniFrameId);
+
 };
 
 //Drawable contains common elements for Enemy and Player
@@ -214,6 +216,7 @@ Player.prototype.checkReached = function(){
 Player.prototype.renderLife = function(){
     if (this.life === 0){
         game.gameOver();
+        //this.life = -1; //this fixes problem for removing some divs
     }
 
 
@@ -223,6 +226,7 @@ Player.prototype.renderLife = function(){
         imgX -= 40;
     }
 };
+
 
 Player.prototype.renderScore = function(){
     document.getElementById("score").innerHTML = 'Score : ' + this.score;
