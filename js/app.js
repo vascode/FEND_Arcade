@@ -72,12 +72,18 @@ Game.prototype.checkCollisions = function(){
 };
 
 Game.prototype.gameOver = function(){
+    /*
     document.getElementById("score").style.display = 'none';
     document.getElementById("timer").style.display = 'none';
     document.getElementById("game-board").style.display = 'none';
     document.getElementById("restart").style.display = 'none';
-    /*var scoreDiv = document.getElementById("score");
-    scoreDiv.parentNode.removeChild(scoreDiv);
+    */
+    var scoreDiv = document.getElementById("score");
+    var scoreDivParent = scoreDiv && scoreDiv.parentNode;
+    scoreDivParent.removeChild(scoreDiv);
+    //scoreDiv.parentNode.removeChild(scoreDiv);
+
+
     var timerDiv = document.getElementById("timer");
     timerDiv.parentNode.removeChild(timerDiv);
     var gameBoardDiv = document.getElementById("game-board");
@@ -85,7 +91,7 @@ Game.prototype.gameOver = function(){
 
     var restartButton = document.getElementById("restart");
     restartButton.parentNode.removeChild(restartButton);
-*/
+
     document.getElementById("game-over").style.display = 'inline-block';
     document.getElementById('game-over').innerHTML = 'Game Over';
 
