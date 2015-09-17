@@ -59,12 +59,28 @@ li {
 	margin: auto auto auto 50px;
 }
 
-#restart, #game-over {
+#restart {
 	display: none;
 }
 
+#game-over {
+	display: none;
+	position: relative;
+}
 
+#endImg {
+	opacity: 0.3;
+}
 
+#game-over-text {
+	position: absolute;
+	top:200px;
+	left:70px;
+	text-align: center;
+	font-size: 50px;
+	font-family: 'Play', sans-serif;
+	font-weight: 700;
+}
 /*
 
 #game-board {

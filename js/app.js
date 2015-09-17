@@ -79,7 +79,8 @@ Game.prototype.gameOver = function(){
     document.getElementById("restart").style.display = 'none';
     */
     var scoreDiv = document.getElementById("score");
-    var scoreDivParent = scoreDiv && scoreDiv.parentNode;
+    //var scoreDivParent = scoreDiv && scoreDiv.parentNode;
+    var scoreDivParent = scoreDiv.parentNode;
     scoreDivParent.removeChild(scoreDiv);
     //scoreDiv.parentNode.removeChild(scoreDiv);
 
@@ -93,7 +94,8 @@ Game.prototype.gameOver = function(){
     restartButton.parentNode.removeChild(restartButton);
 
     document.getElementById("game-over").style.display = 'inline-block';
-    document.getElementById('game-over').innerHTML = 'Game Over';
+    var scoreMessage = "Your score is " + this.player.score;
+    document.getElementById('game-over-text').innerHTML = '<p>Game Over<br><br></p>' + scoreMessage;
 
 };
 
