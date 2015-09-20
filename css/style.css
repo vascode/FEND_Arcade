@@ -61,6 +61,10 @@ li {
 
 #restart {
 	display: none;
+	background-color: #52CC52;
+	color: white;
+	padding: 5px 5px 5px 5px;
+	margin: auto auto auto 450px;
 }
 
 #game-over {

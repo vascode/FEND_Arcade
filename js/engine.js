@@ -13,7 +13,7 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
-var AniFrameId="";
+
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -27,6 +27,7 @@ var Engine = (function(global) {
         lastTime;
         game = new Game();
 
+    var AniFrameId="";
 
     canvas.width = 505;
     canvas.height = 606;
@@ -60,7 +61,12 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        AniFrameId = win.requestAnimationFrame(main);
+        AniFrameId = global.requestAnimationFrame(main);
+        if (game.state === false){
+            window.cancelAnimationFrame(AniFrameId);
+        }
+
+
     }
 
     /* This function does some initial setup that should only occur once,

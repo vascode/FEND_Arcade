@@ -44,6 +44,8 @@ var Game = function(){
         e.preventDefault();
       }
 
+      this.state = true;
+
     });
 
 }
@@ -80,8 +82,8 @@ Game.prototype.gameOver = function(){
     document.getElementById("game-board").style.display = 'none';
     document.getElementById("restart").style.display = 'none';
     */
-    
-    //window.cancelAnimationFrame(AniFrameId);
+
+    this.state = false;
 
     var scoreDiv = document.getElementById("score");
     //var scoreDivParent = scoreDiv && scoreDiv.parentNode;
@@ -96,7 +98,8 @@ Game.prototype.gameOver = function(){
     gameBoardDiv.parentNode.removeChild(gameBoardDiv);
 
     var restartButton = document.getElementById("restart");
-    restartButton.parentNode.removeChild(restartButton);
+    //restartButton.parentNode.removeChild(restartButton);
+    restartButton.style.marginTop  = "20px";
 
     document.getElementById("game-over").style.display = 'inline-block';
     var scoreMessage = "Your score is " + this.player.score;
@@ -221,7 +224,7 @@ Player.prototype.checkReached = function(){
 Player.prototype.renderLife = function(){
     if (this.life === 0){
         game.gameOver();
-        this.life = -1; //this fixes problem for removing some divs
+        //this.life = -1; //this fixes problem for removing some divs
     }
 
 
