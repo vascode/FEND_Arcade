@@ -13,7 +13,7 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
-var AniFrameId;
+var AniFrameId="";
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -150,8 +150,6 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
-
         renderEntities();
     }
 

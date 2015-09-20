@@ -1,5 +1,7 @@
 //Global variable
 
+
+
 var minEnemySpeed = 100,    //enemy's max speed
     maxEnemySpeed = 300,    //enemy's minh speed
     numTiles = 3,           //number of tiles where enemies can move
@@ -78,6 +80,9 @@ Game.prototype.gameOver = function(){
     document.getElementById("game-board").style.display = 'none';
     document.getElementById("restart").style.display = 'none';
     */
+    //requestAnimationFrame
+    window.cancelAnimationFrame(AniFrameId);
+
     var scoreDiv = document.getElementById("score");
     //var scoreDivParent = scoreDiv && scoreDiv.parentNode;
     var scoreDivParent = scoreDiv.parentNode;
@@ -97,7 +102,7 @@ Game.prototype.gameOver = function(){
     var scoreMessage = "Your score is " + this.player.score;
     document.getElementById('game-over-text').innerHTML = '<p>Game Over<br><br></p>' + scoreMessage;
 
-    window.cancelAnimationFrame(AniFrameId);
+
 
 };
 
