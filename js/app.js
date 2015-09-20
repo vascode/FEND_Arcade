@@ -80,8 +80,8 @@ Game.prototype.gameOver = function(){
     document.getElementById("game-board").style.display = 'none';
     document.getElementById("restart").style.display = 'none';
     */
-    //requestAnimationFrame
-    window.cancelAnimationFrame(AniFrameId);
+    
+    //window.cancelAnimationFrame(AniFrameId);
 
     var scoreDiv = document.getElementById("score");
     //var scoreDivParent = scoreDiv && scoreDiv.parentNode;
@@ -221,7 +221,7 @@ Player.prototype.checkReached = function(){
 Player.prototype.renderLife = function(){
     if (this.life === 0){
         game.gameOver();
-        //this.life = -1; //this fixes problem for removing some divs
+        this.life = -1; //this fixes problem for removing some divs
     }
 
 
