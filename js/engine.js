@@ -13,8 +13,6 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
-
-
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -61,10 +59,13 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
+
         AniFrameId = global.requestAnimationFrame(main);
         if (game.stop === true){
             window.cancelAnimationFrame(AniFrameId);
+            game.gameOver();
         }
+
 
 
     }
@@ -100,6 +101,7 @@ var Engine = (function(global) {
     function update(dt) {
         updateEntities(dt);
         game.checkCollisions();
+        game.checkCollection();
         //game.player.checkLife();
         //game.player.checkScore();
     }
@@ -167,20 +169,25 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        //game.items.render();
-        game.allItems.forEach(function(item){
-            item.render();
-        });
+        game.item.render();
+
+        // game.allItems.forEach(function(item){
+        //     item.render();
+        // });
         game.allEnemies.forEach(function(enemy) {
             enemy.render();
         });
 
         game.player.render();
         game.player.renderLife();
+        game.player.renderScore();
 
         game.allObstacles.forEach(function(obstacle){
             obstacle.render();
         });
+
+        game.player.renderLife();
+        game.fish.render();
 
     }
 
@@ -203,17 +210,13 @@ var Engine = (function(global) {
         'images/enemy-bug.png',
         'images/char-boy.png',
         'images/heart-medium.png',
-        'images/Heart.png',
         'images/gem-blue.png',
-        'images/gem-green.png',
         'images/Key.png',
-        'images/Star.png',
         'images/Rock.png',
-        "images/temp/gem-blue.png",
-        "images/temp/gem-green.png",
-        "images/temp/Star.png",
-        "images/temp/Key.png",
-        "images/temp/Heart.png"
+        "images/Star.png",
+        "images/Heart.png",
+        "images/treasureChest.png",
+        'images/Fish.png'
     ]);
     Resources.onReady(init);
 

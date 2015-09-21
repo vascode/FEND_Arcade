@@ -4,7 +4,7 @@ var minEnemySpeed = 100,    //enemy's max speed
     maxEnemySpeed = 300,    //enemy's minh speed
     numTiles = 3,           //number of tiles where enemies can move
     xStep = 100,
-    yStep = 82;
+    yStep = 84;
 
 //store global state for whole game
 var Game = function(){
@@ -20,9 +20,10 @@ var Game = function(){
     this.obLocation = [];
     this.generateObstacles();
 
-    this.allItems = [];
+    //this.allItems = [];
     this.generateItems(this.obLocation);
 
+    this.generateFish();
 
     // Assign "this" to new var "that" to use the object in a nested "keyup" function below.
     var that = this;
@@ -66,7 +67,7 @@ Game.prototype.generateEnemy = function(){
 
 Game.prototype.generatePlayer = function(){
     this.player = new Player();
-    this.player.renderScore();
+    // this.player.renderScore();
 };
 
 Game.prototype.generateObstacles = function(){
@@ -78,40 +79,92 @@ Game.prototype.generateObstacles = function(){
 };
 
 Game.prototype.generateItems = function(obLoc){
-    var item = new Items(obLoc);
-    this.allItems.push(item);
+    this.item = new Items(obLoc);
+    //var item = new Items(obLoc);
+    //this.allItems.push(item);
 };
+
+Game.prototype.generateFish = function(obLoc){
+    this.fish = new Fish();
+};
+
 
 //if player collide with enemy or Rocks -> player goes back to initial place
 Game.prototype.checkCollisions = function(){
     var i;
     for (i = 0; i < this.allEnemies.length; i++){
-        if(Math.abs(this.player.x -this.allEnemies[i].x) < 50 && Math.abs(this.player.y - this.allEnemies[i].y) < 50){
+        if((Math.abs(this.player.x -this.allEnemies[i].x) < 50 && Math.abs(this.player.y - this.allEnemies[i].y) < 50) ||
+        (Math.abs(this.player.x -this.allObstacles[i].x) < 50 && Math.abs(this.player.y - this.allObstacles[i].y) < 50)){
             this.player.reset();
             if (this.player.life > 0){
                 this.player.life--;
             }
-        }
-    }
-    for (i = 0; i < this.allObstacles.length; i++){
-        if(Math.abs(this.player.x -this.allObstacles[i].x) < 50 && Math.abs(this.player.y - this.allObstacles[i].y) < 50){
-            this.player.reset();
-            if (this.player.life > 0)
-                this.player.life--;
             if(this.player.score > 0){
                 this.player.score--;
-                this.player.renderScore();
             }
-
         }
+
     }
 };
 
 //if player hits items -> + point
 Game.prototype.checkCollection = function(){
+    var i;
+    if(Math.abs(this.player.x -this.item.x) < 50 && Math.abs(this.player.y - this.item.y) < 50){
+        switch(this.item.sprite){
+            case 'images/Heart.png':
+                this.player.life++;
+                this.player.renderLife();
+                break;
+            case 'images/Star.png':
+                var originalEnemySpeeds = new Array(this.allEnemies.length);
+                var allEnemies = this.allEnemies;
+                for (i=0; i<allEnemies.length; i++){
+                    // console.log(this.allEnemies[i].speed);
+                    originalEnemySpeeds[i] = allEnemies[i].speed;
+                    allEnemies[i].speed = allEnemies[i].speed/3;
+                }
+                setTimeout(function(){
+                    for(i=0; i<originalEnemySpeeds.length; i++){
+                        allEnemies[i].speed = originalEnemySpeeds[i];
+                    }
+                }, 2000);
+                break;
+            case 'images/treasureChest.png':
+                this.player.score += 3;
+                break;
 
+            case 'images/gem-blue.png':
+                this.player.score += 1;
+                break;
+        }
+        this.item.x = -100;
+        this.item.y = -100;
+    }
+};
 
-}
+//reset position for items, rocks and fish
+Game.prototype.resetObjects = function(){
+        this.allObstacles = [];
+        //track location of obstacles
+        this.obLocation = [];
+        this.generateObstacles();
+
+        this.item.itemSelector();
+        this.item.setLocOfItems(this.obLocation);
+
+        this.fish.reset();
+};
+
+Game.prototype.checkReached = function(){
+    if(Math.abs(this.player.x -this.fish.x) < 50 && Math.abs(this.player.y - this.fish.y) < 50){
+        this.player.score++;
+        // this.renderScore();
+        this.player.reset();
+        this.resetObjects();
+    }
+};
+
 
 Game.prototype.gameOver = function(){
     /*
@@ -152,7 +205,7 @@ var Drawable = function(){
 
     //available position for drawables
     this.gridX = [0,100,200,300,400];
-    this.gridY =  [60,145,230];
+    this.gridY =  [60,145,230,315];
 
     this.x;
     this.y;
@@ -229,7 +282,7 @@ var Player = function(){
     //this.playerX = [100,200,300,400];
     //this.playerY = [300,400];
     this.x = 200;   //this value
-    this.y = 400;   //this value
+    this.y = 410;   //this value
 
     this.score = 0;
     this.life = 3;
@@ -244,28 +297,28 @@ Player.prototype.update = function() {
 
 // Draw player on the screen, required method for game
 Player.prototype.render = function(){
-    this.checkReached();
+    game.checkReached();
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 //player goes back to original point
 Player.prototype.reset = function(){
     this.x = 200;
-    this.y = 400;
+    this.y = 410;
 };
 
-Player.prototype.checkReached = function(){
-    if (this.y < 0){
-        this.score++;
-        this.renderScore();
-        this.reset();
-    }
-};
+// Player.prototype.checkReached = function(){
+//     if (this.y <= 0){
+//         this.score++;
+//         //this.renderScore();
+//         this.reset();
+//     }
+// };
 
 Player.prototype.renderLife = function(){
     if (this.life === 0){
-        game.gameOver();
-        //this.life = -1; //this fixes problem for removing some divs
+        // game.gameOver();
+        game.stop = true;
     }
 
 
@@ -307,6 +360,7 @@ Player.prototype.handleInput = function(key) {
                 console.log("x :" + this.x + "y: " + this.y);
             }
             break;
+
     }
 };
 
@@ -340,17 +394,20 @@ Obstacles.prototype.render = function() {
 var Items = function(obLoc){
     //this.itemImages = ['images/Heart.png', 'images/gem-blue.png', 'images/gem-green.png', 'images/Key.png', 'images/Star.png'];
     this.itemImages = [
-        "images/temp/gem-blue.png",
-        "images/temp/gem-green.png",
-        "images/temp/Star.png",
-        "images/temp/Key.png",
-        "images/temp/Heart.png"
+        "images/gem-blue.png",
+        "images/Star.png",
+        "images/Heart.png",
+        "images/treasureChest.png"
     ];
-    this.sprite = this.itemImages[this.randomInt(0, this.itemImages.length-1)];
-
+    this.itemSelector();
     this.setLocOfItems(obLoc);
 };
 Items.prototype = new Drawable();
+
+Items.prototype.itemSelector = function(){
+   this.sprite = this.itemImages[this.randomInt(0, this.itemImages.length-1)];
+   //this.sprite = 'images/temp/download.png';
+}
 
 Items.prototype.setLocOfItems = function(obLoc){
     var tempX;
@@ -378,12 +435,23 @@ Items.prototype.setLocOfItems = function(obLoc){
 
 }
 
-Items.prototype.update = function(){
-
-};
-
 // Draw the enemy on the screen, required method for game
 Items.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     //ctx.drawImage(Resources.get(this.rockImage), this.x, this.y);
 };
+
+var Fish = function(){
+    this.sprite = 'images/Fish.png';
+    this.reset();
+}
+Fish.prototype = new Drawable();
+
+Fish.prototype.reset = function(){
+    this.x = this.gridX[this.randomInt(0,this.gridX.length-1)];
+    this.y = -20;
+}
+
+Fish.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
