@@ -26,6 +26,7 @@ var Engine = (function(global) {
         game = new Game();
 
     var AniFrameId="";
+    var remainingTime;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -65,10 +66,7 @@ var Engine = (function(global) {
             window.cancelAnimationFrame(AniFrameId);
             game.gameOver();
         }
-
-
-
-    }
+    };
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -82,7 +80,10 @@ var Engine = (function(global) {
             startButton.parentNode.removeChild(startButton);
 
             doc.getElementById("score").style.display = 'inline-block';
+            doc.getElementById('timer').style.display = 'inline-block';
             doc.getElementById("restart").style.display = 'inline-block';
+
+            game.generateTimer(60);     //in seconds
 
             main();
 
@@ -185,9 +186,9 @@ var Engine = (function(global) {
         game.allObstacles.forEach(function(obstacle){
             obstacle.render();
         });
-
-        game.player.renderLife();
         game.fish.render();
+        game.player.renderLife();
+
 
     }
 

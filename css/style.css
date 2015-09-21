@@ -55,17 +55,28 @@ li {
 }
 
 #score {
+	font-size: 25px;
+	display: none;
+	margin: auto auto auto 150px;
+	/*text-decoration:underline;*/
+	/*border: 2px solid black;*/
+	/*padding: 10px 10px 10px 10px;*/
+	/*border-radius: 10px;*/
+}
+
+#timer {
 	font-size: 20px;
 	display: none;
 	margin: auto auto auto 50px;
 	border: 2px solid black;
 	padding: 10px 10px 10px 10px;
 	border-radius: 10px;
+	background-color: #00B8E6;
 }
 
 #restart {
 	display: none;
-	margin: auto auto auto 420px;
+	margin: auto auto auto 400px;
 }
 
 #game-over {

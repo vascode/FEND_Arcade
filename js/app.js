@@ -53,7 +53,7 @@ var Game = function(){
       }
 
       this.stop = false;
-
+      this.remainingTime;
     });
 
 }
@@ -87,7 +87,6 @@ Game.prototype.generateItems = function(obLoc){
 Game.prototype.generateFish = function(obLoc){
     this.fish = new Fish();
 };
-
 
 //if player collide with enemy or Rocks -> player goes back to initial place
 Game.prototype.checkCollisions = function(){
@@ -128,14 +127,15 @@ Game.prototype.checkCollection = function(){
                     for(i=0; i<originalEnemySpeeds.length; i++){
                         allEnemies[i].speed = originalEnemySpeeds[i];
                     }
-                }, 2000);
+                }, 3000);
                 break;
             case 'images/treasureChest.png':
                 this.player.score += 3;
                 break;
 
             case 'images/gem-blue.png':
-                this.player.score += 1;
+                // this.player.score += 1;
+                this.remainingTime  += 10;
                 break;
         }
         this.item.x = -100;
@@ -158,23 +158,14 @@ Game.prototype.resetObjects = function(){
 
 Game.prototype.checkReached = function(){
     if(Math.abs(this.player.x -this.fish.x) < 50 && Math.abs(this.player.y - this.fish.y) < 50){
-        this.player.score++;
-        // this.renderScore();
-        this.player.reset();
-        this.resetObjects();
+            game.player.score += 5;
+        game.player.reset();
+        game.resetObjects();
     }
 };
 
-
 Game.prototype.gameOver = function(){
-    /*
-    document.getElementById("score").style.display = 'none';
-    document.getElementById("timer").style.display = 'none';
-    document.getElementById("game-board").style.display = 'none';
-    document.getElementById("restart").style.display = 'none';
-    */
-
-    this.stop = true;
+    //this.stop = true;
 
     var scoreDiv = document.getElementById("score");
     //var scoreDivParent = scoreDiv && scoreDiv.parentNode;
@@ -194,10 +185,54 @@ Game.prototype.gameOver = function(){
     document.getElementById("game-over").style.display = 'inline-block';
     var scoreMessage = "Your score is " + this.player.score;
     document.getElementById('game-over-text').innerHTML = '<p>Game Over<br><br></p>' + scoreMessage;
-
-
-
 };
+
+Game.prototype.generateTimer = function (seconds){
+    var timerDiv = document.getElementById('timer');
+    this.remainingTime = seconds;
+    timerDiv.innerHTML = this.timerFormat(seconds);
+    this.updateTimer();
+};
+
+Game.prototype.updateTimer = function(){
+    if (this.remainingTime === 0 ){
+        game.stop = true;
+        //this.gameOver()
+    }
+    else{
+        var timerDiv = document.getElementById('timer');
+        if (this.remainingTime > 20)
+            timerDiv.style.backgroundColor = "#00B8E6";
+        else if (this.remainingTime <= 20 && this.remainingTime  > 11)
+            timerDiv.style.backgroundColor = "#FFCC00";
+        else if (this.remainingTime <= 10 && this.remainingTime > 5)
+            timerDiv.style.backgroundColor = "#FF6600";
+        else if (this.remainingTime <= 5)
+            timerDiv.style.backgroundColor = "#E60000";
+
+        timerDiv.innerHTML = this.timerFormat(this.remainingTime--);
+        // setTimeout(updateTimer(), 1000);
+
+        //updateTimer = this.updateTimer;
+
+        setTimeout(function(){
+            game.updateTimer();
+        }, 1000);
+    }
+};
+
+Game.prototype.timerFormat = function(seconds) {
+    var formattedMinute = Math.floor(seconds/60);
+    formattedMinute = (formattedMinute < 10)? '0' + formattedMinute : formattedMinute;
+    var formattedSeconds = seconds%60;
+    formattedSeconds = (formattedSeconds < 10)? '0' + formattedSeconds  : formattedSeconds;
+
+    var formattedTime = formattedMinute + ' : ' + formattedSeconds;
+
+    return formattedTime;
+};
+
+
 
 //Drawable contains common elements for Enemy and Player
 var Drawable = function(){
