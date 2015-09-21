@@ -62,7 +62,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         AniFrameId = global.requestAnimationFrame(main);
-        if (game.state === false){
+        if (game.stop === true){
             window.cancelAnimationFrame(AniFrameId);
         }
 
@@ -167,12 +167,21 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+        //game.items.render();
+        game.allItems.forEach(function(item){
+            item.render();
+        });
         game.allEnemies.forEach(function(enemy) {
             enemy.render();
         });
 
         game.player.render();
         game.player.renderLife();
+
+        game.allObstacles.forEach(function(obstacle){
+            obstacle.render();
+        });
+
     }
 
     /* This function does nothing but it could have been a good place to
@@ -193,7 +202,18 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-        'images/Heart-small.png'
+        'images/heart-medium.png',
+        'images/Heart.png',
+        'images/gem-blue.png',
+        'images/gem-green.png',
+        'images/Key.png',
+        'images/Star.png',
+        'images/Rock.png',
+        "images/temp/gem-blue.png",
+        "images/temp/gem-green.png",
+        "images/temp/Star.png",
+        "images/temp/Key.png",
+        "images/temp/Heart.png"
     ]);
     Resources.onReady(init);
 

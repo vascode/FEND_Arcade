@@ -25,16 +25,23 @@
 				<li><span class="control quit">q</span> Quit</li>
 				<li><span class="control boxed">spacebar</span> Start</li>
 			</ul>
-			<hr><br>
-			<h2 class="left-margin">Items to obtain :  </h2>
+			<hr>
+			<h2 class="left-margin">+ Gain points :  </h2>
 			<ul>
-				<li>Blue gem : slow down enemies temporarily</li>
-				<li>Green gem : + 2 points</li>
-				<li>Orange gem : + 3 points</li>
-				<li>Heart : +1 life</li>
+				<li><img src="images/heart-small.png" alt="heart image" class="small-image"> +1 life</li>
+				<li><img src="images/gem-blue-small.png" alt="blue gem" class="small-image"> +2 points</li>
+				<li><img src="images/gem-green-small.png" alt="geen gem" class="small-image"> +3 points </li>
+				<li><img src="images/key-small.png" alt="key" class="small-image">&ensp;generate more items</li>
+				<li><img src="images/star-small.png" alt="star" class="small-image">&ensp;slow down enemies</li>
 			</ul>
 			<hr>
-			<br><br>
+			<h2 class="left-margin">- Lose points :  </h2>
+			<ul>
+				<li><img src="images/rock-small.png" alt="rock image" class="small-image"> -1 life, -1 point</li>
+				<li><img src="images/enemy-bug-small.png" alt="bug image" class="small-image"> -1 life</li>
+			</ul>
+			<hr>
+			<br>
 		</div>
 		<div class="col-md-8 col-sm-12">
 			<!--<div class="image">-->
@@ -49,7 +56,8 @@
 				<img id="endImg" src ='images/endImg.png' alt="Game over image">
 				<span id="game-over-text"></span>
 			</div>
-			<button id="restart" onClick="history.go(0)">Restart</button>
+			<br>
+			<button id="restart" onClick="history.go(0)" class="btn-lg btn-primary">Restart</button>
 
 		</div>
 	</div>

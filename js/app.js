@@ -1,7 +1,5 @@
 //Global variable
 
-
-
 var minEnemySpeed = 100,    //enemy's max speed
     maxEnemySpeed = 300,    //enemy's minh speed
     numTiles = 3,           //number of tiles where enemies can move
@@ -12,10 +10,19 @@ var minEnemySpeed = 100,    //enemy's max speed
 var Game = function(){
 
     //instantiate enemies and player.
-    this.allEnemies=[];
+    this.allEnemies = [];
     this.generateEnemy();
     this.generatePlayer();
-    //this.generateLife();
+
+    //generate multiple obstacles(such as Rocks)
+    this.allObstacles = [];
+    //track location of obstacles
+    this.obLocation = [];
+    this.generateObstacles();
+
+    this.allItems = [];
+    this.generateItems(this.obLocation);
+
 
     // Assign "this" to new var "that" to use the object in a nested "keyup" function below.
     var that = this;
@@ -44,7 +51,7 @@ var Game = function(){
         e.preventDefault();
       }
 
-      this.state = true;
+      this.stop = false;
 
     });
 
@@ -60,12 +67,25 @@ Game.prototype.generateEnemy = function(){
 Game.prototype.generatePlayer = function(){
     this.player = new Player();
     this.player.renderScore();
-}
+};
 
-//if collision between enemy and player -> player goes back to initial place
+Game.prototype.generateObstacles = function(){
+    for (i=0; i<4; i++){
+        var obstacle = new Obstacles();
+        this.allObstacles.push(obstacle);
+        this.obLocation.push([obstacle.x, obstacle.y]);
+    };
+};
+
+Game.prototype.generateItems = function(obLoc){
+    var item = new Items(obLoc);
+    this.allItems.push(item);
+};
+
+//if player collide with enemy or Rocks -> player goes back to initial place
 Game.prototype.checkCollisions = function(){
-    //console.log("checkCollisions");
-    for (var i = 0; i < this.allEnemies.length; i++){
+    var i;
+    for (i = 0; i < this.allEnemies.length; i++){
         if(Math.abs(this.player.x -this.allEnemies[i].x) < 50 && Math.abs(this.player.y - this.allEnemies[i].y) < 50){
             this.player.reset();
             if (this.player.life > 0){
@@ -73,7 +93,25 @@ Game.prototype.checkCollisions = function(){
             }
         }
     }
+    for (i = 0; i < this.allObstacles.length; i++){
+        if(Math.abs(this.player.x -this.allObstacles[i].x) < 50 && Math.abs(this.player.y - this.allObstacles[i].y) < 50){
+            this.player.reset();
+            if (this.player.life > 0)
+                this.player.life--;
+            if(this.player.score > 0){
+                this.player.score--;
+                this.player.renderScore();
+            }
+
+        }
+    }
 };
+
+//if player hits items -> + point
+Game.prototype.checkCollection = function(){
+
+
+}
 
 Game.prototype.gameOver = function(){
     /*
@@ -83,7 +121,7 @@ Game.prototype.gameOver = function(){
     document.getElementById("restart").style.display = 'none';
     */
 
-    this.state = false;
+    this.stop = true;
 
     var scoreDiv = document.getElementById("score");
     //var scoreDivParent = scoreDiv && scoreDiv.parentNode;
@@ -98,8 +136,7 @@ Game.prototype.gameOver = function(){
     gameBoardDiv.parentNode.removeChild(gameBoardDiv);
 
     var restartButton = document.getElementById("restart");
-    //restartButton.parentNode.removeChild(restartButton);
-    restartButton.style.marginTop  = "20px";
+        restartButton.style.marginTop  = "40px";
 
     document.getElementById("game-over").style.display = 'inline-block';
     var scoreMessage = "Your score is " + this.player.score;
@@ -113,11 +150,16 @@ Game.prototype.gameOver = function(){
 var Drawable = function(){
     this.sprite;
 
+    //available position for drawables
+    this.gridX = [0,100,200,300,400];
+    this.gridY =  [60,145,230];
+
     this.x;
     this.y;
 
     this.speed;
 
+    //generate number between min and max
     this.randomInt = function(min, max){
         return Math.floor(Math.random()*(max-min+1) + min);
     }
@@ -132,14 +174,13 @@ var Enemy = function() {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
 
-
-
-    this.enemyY = [60,145,230];
+    //this.enemyY = [60,145,230];
 
     this.x = -101; // test value
 
     //set random y position for enemy
-    this.y = this.enemyY[this.randomInt(0,2)];
+    //this.y = this.enemyY[this.randomInt(0,2)];
+    this.y = this.gridY[this.randomInt(0,this.gridY.length-1)];
 
     this.speed = this.randomInt(minEnemySpeed, maxEnemySpeed);
 };
@@ -156,7 +197,7 @@ Enemy.prototype.update = function(dt) {
 
     if (this.x > 505) {
         this.x = -101;
-        this.y = this.enemyY[this.randomInt(0,2)];  // bug can start in any y position
+        this.y = this.gridY[this.randomInt(0,this.gridY.length-1)];  // bug can start in any y position
     };
 };
 
@@ -185,14 +226,14 @@ var Player = function(){
 
     //this.sprite = this.pImages[Math.round(Math.random()*4)];
     this.sprite = this.pImages[0];
-    this.playerX = [100,200,300,400];
-    this.playerY = [300,400];
+    //this.playerX = [100,200,300,400];
+    //this.playerY = [300,400];
     this.x = 200;   //this value
     this.y = 400;   //this value
 
     this.score = 0;
     this.life = 3;
-    this.lifeImg = 'images/Heart-small.png';
+    this.lifeImg = 'images/heart-medium.png';
 };
 // Set Enemy to inherit properties from Drawable
 Player.prototype = new Drawable();
@@ -269,3 +310,80 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
+var Obstacles = function(){
+    this.sprite = 'images/Rock.png';
+
+    //available coordinate of x and y for items
+    //this.obstacleX = [0,100,200,300,400];
+    //this.obstacleY =  [60,145,230];
+
+    //set random x position for item
+    // this.x = this.obstacleX[this.randomInt(0,this.obstacleX.length-1)];
+    this.x = this.gridX[this.randomInt(0,this.gridX.length-1)];
+    //set random y position for item
+    // this.y = this.obstacleY[this.randomInt(0,this.obstacleY.length-1)];
+    this.y = this.gridY[this.randomInt(0,this.gridY.length-1)];
+};
+Obstacles.prototype = new Drawable();
+
+Obstacles.prototype.update = function(){
+
+}
+
+// Draw the enemy on the screen, required method for game
+Obstacles.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    //ctx.drawImage(Resources.get(this.rockImage), this.x, this.y);
+};
+
+//pass obstacles' location (double array) so that items does not overlay obstacles.
+var Items = function(obLoc){
+    //this.itemImages = ['images/Heart.png', 'images/gem-blue.png', 'images/gem-green.png', 'images/Key.png', 'images/Star.png'];
+    this.itemImages = [
+        "images/temp/gem-blue.png",
+        "images/temp/gem-green.png",
+        "images/temp/Star.png",
+        "images/temp/Key.png",
+        "images/temp/Heart.png"
+    ];
+    this.sprite = this.itemImages[this.randomInt(0, this.itemImages.length-1)];
+
+    this.setLocOfItems(obLoc);
+};
+Items.prototype = new Drawable();
+
+Items.prototype.setLocOfItems = function(obLoc){
+    var tempX;
+    var tempY;
+    var locMatched = true;
+
+    while (locMatched){
+        //set random x position for item
+        tempX = this.gridX[this.randomInt(0,this.gridX.length-1)];
+        //set random y position for item
+        tempY = this.gridY[this.randomInt(0,this.gridY.length-1)];
+        //checking if items location overlaps any of obstacles'
+        for (var i=0; i<obLoc.length; i++){
+            if (obLoc[i][0] === tempX && obLoc[i][1] === tempY){
+                locMatched = true;
+                break;
+            }
+            else
+                locMatched = false;
+        }
+    }
+
+    this.x = tempX;
+    this.y = tempY;
+
+}
+
+Items.prototype.update = function(){
+
+};
+
+// Draw the enemy on the screen, required method for game
+Items.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    //ctx.drawImage(Resources.get(this.rockImage), this.x, this.y);
+};
