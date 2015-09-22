@@ -36,16 +36,8 @@ button {
 	padding: 1px 7px 1px 7px;
 }
 
-.quit, .pause {
+.quit {
 	padding: 1px 10px 1px 10px;
-}
-
-.boxed {
-  border: 2px solid black;
-  font-size: 15px;
-  padding: 4px 4px 4px 4px;
-  margin: auto auto 10px auto;
-  border-radius: 10px;
 }
 
 li {
@@ -97,6 +89,8 @@ li {
 	font-family: 'Play', sans-serif;
 	font-weight: 700;
 }
+
+
 
 /*
 

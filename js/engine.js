@@ -22,15 +22,14 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
-        game = new Game();
+        lastTime,
+        remainingTime,
+        animate = true,
+        AniFrameId="";
 
-    var AniFrameId="";
-    var remainingTime;
-
+    game = new Game();
     canvas.width = 505;
     canvas.height = 606;
-    //doc.body.appendChild(canvas);
     doc.getElementById('game-board').appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -60,8 +59,8 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
+         AniFrameId = global.requestAnimationFrame(main);
 
-        AniFrameId = global.requestAnimationFrame(main);
         if (game.stop === true){
             window.cancelAnimationFrame(AniFrameId);
             game.gameOver();
@@ -103,8 +102,6 @@ var Engine = (function(global) {
         updateEntities(dt);
         game.checkCollisions();
         game.checkCollection();
-        //game.player.checkLife();
-        //game.player.checkScore();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -118,7 +115,6 @@ var Engine = (function(global) {
         game.allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        //game.player.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -172,9 +168,6 @@ var Engine = (function(global) {
          */
         game.item.render();
 
-        // game.allItems.forEach(function(item){
-        //     item.render();
-        // });
         game.allEnemies.forEach(function(enemy) {
             enemy.render();
         });
@@ -188,9 +181,7 @@ var Engine = (function(global) {
         });
         game.fish.render();
         game.player.renderLife();
-
-
-    }
+    };
 
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
@@ -210,6 +201,10 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
         'images/heart-medium.png',
         'images/gem-blue.png',
         'images/Key.png',

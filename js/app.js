@@ -3,8 +3,8 @@
 var minEnemySpeed = 100,    //enemy's max speed
     maxEnemySpeed = 300,    //enemy's minh speed
     numTiles = 3,           //number of tiles where enemies can move
-    xStep = 100,
-    yStep = 84;
+    xStep = 100,            //horizontal step that player can move at one key stroke
+    yStep = 84;             //vertical step that player can move at one key stroke
 
 //store global state for whole game
 var Game = function(){
@@ -20,10 +20,12 @@ var Game = function(){
     this.obLocation = [];
     this.generateObstacles();
 
-    //this.allItems = [];
     this.generateItems(this.obLocation);
 
     this.generateFish();
+
+    this.remainingTime;
+    this.stop = false;
 
     // Assign "this" to new var "that" to use the object in a nested "keyup" function below.
     var that = this;
@@ -42,21 +44,17 @@ var Game = function(){
           68: 'right',      // D
           83: 'down',       // S
           80: 'pause',      //p
+          81: 'quit',       //q
           82: 'restart',    //r
           87: 'up'          // W
-      }
-
+        }
         that.player.handleInput(allowedKeys[e.keyCode]);
 
         if (e.keyCode in allowedKeys){
         e.preventDefault();
-      }
-
-      this.stop = false;
-      this.remainingTime;
+        }
     });
-
-}
+};
 
 Game.prototype.generateEnemy = function(){
     for (i=0; i<4; i++){
@@ -67,7 +65,6 @@ Game.prototype.generateEnemy = function(){
 
 Game.prototype.generatePlayer = function(){
     this.player = new Player();
-    // this.player.renderScore();
 };
 
 Game.prototype.generateObstacles = function(){
@@ -80,8 +77,6 @@ Game.prototype.generateObstacles = function(){
 
 Game.prototype.generateItems = function(obLoc){
     this.item = new Items(obLoc);
-    //var item = new Items(obLoc);
-    //this.allItems.push(item);
 };
 
 Game.prototype.generateFish = function(obLoc){
@@ -119,7 +114,6 @@ Game.prototype.checkCollection = function(){
                 var originalEnemySpeeds = new Array(this.allEnemies.length);
                 var allEnemies = this.allEnemies;
                 for (i=0; i<allEnemies.length; i++){
-                    // console.log(this.allEnemies[i].speed);
                     originalEnemySpeeds[i] = allEnemies[i].speed;
                     allEnemies[i].speed = allEnemies[i].speed/3;
                 }
@@ -127,14 +121,13 @@ Game.prototype.checkCollection = function(){
                     for(i=0; i<originalEnemySpeeds.length; i++){
                         allEnemies[i].speed = originalEnemySpeeds[i];
                     }
-                }, 3000);
+                }, 1000);
                 break;
             case 'images/treasureChest.png':
                 this.player.score += 3;
                 break;
 
             case 'images/gem-blue.png':
-                // this.player.score += 1;
                 this.remainingTime  += 10;
                 break;
         }
@@ -146,6 +139,7 @@ Game.prototype.checkCollection = function(){
 //reset position for items, rocks and fish
 Game.prototype.resetObjects = function(){
         this.allObstacles = [];
+
         //track location of obstacles
         this.obLocation = [];
         this.generateObstacles();
@@ -165,14 +159,9 @@ Game.prototype.checkReached = function(){
 };
 
 Game.prototype.gameOver = function(){
-    //this.stop = true;
-
     var scoreDiv = document.getElementById("score");
-    //var scoreDivParent = scoreDiv && scoreDiv.parentNode;
     var scoreDivParent = scoreDiv.parentNode;
     scoreDivParent.removeChild(scoreDiv);
-    //scoreDiv.parentNode.removeChild(scoreDiv);
-
 
     var timerDiv = document.getElementById("timer");
     timerDiv.parentNode.removeChild(timerDiv);
@@ -191,13 +180,13 @@ Game.prototype.generateTimer = function (seconds){
     var timerDiv = document.getElementById('timer');
     this.remainingTime = seconds;
     timerDiv.innerHTML = this.timerFormat(seconds);
-    this.updateTimer();
+    if (!game.stop)
+        this.updateTimer();
 };
 
 Game.prototype.updateTimer = function(){
     if (this.remainingTime === 0 ){
         game.stop = true;
-        //this.gameOver()
     }
     else{
         var timerDiv = document.getElementById('timer');
@@ -211,12 +200,10 @@ Game.prototype.updateTimer = function(){
             timerDiv.style.backgroundColor = "#E60000";
 
         timerDiv.innerHTML = this.timerFormat(this.remainingTime--);
-        // setTimeout(updateTimer(), 1000);
-
-        //updateTimer = this.updateTimer;
 
         setTimeout(function(){
-            game.updateTimer();
+             if (!game.stop)
+                game.updateTimer();
         }, 1000);
     }
 };
@@ -231,8 +218,6 @@ Game.prototype.timerFormat = function(seconds) {
 
     return formattedTime;
 };
-
-
 
 //Drawable contains common elements for Enemy and Player
 var Drawable = function(){
@@ -312,12 +297,10 @@ var Player = function(){
         'images/char-princess-girl.png'
     ];
 
-    //this.sprite = this.pImages[Math.round(Math.random()*4)];
-    this.sprite = this.pImages[0];
-    //this.playerX = [100,200,300,400];
-    //this.playerY = [300,400];
-    this.x = 200;   //this value
-    this.y = 410;   //this value
+    this.characterSelector();
+
+    this.x = 200;   // initial position of x
+    this.y = 410;   // initial position of y
 
     this.score = 0;
     this.life = 3;
@@ -326,9 +309,10 @@ var Player = function(){
 // Set Enemy to inherit properties from Drawable
 Player.prototype = new Drawable();
 
-Player.prototype.update = function() {
-    //multiply any movement by the dt parameter
-};
+//select character at random
+Player.prototype.characterSelector = function(){
+    this.sprite = this.pImages[this.randomInt(0, this.pImages.length-1)];
+}
 
 // Draw player on the screen, required method for game
 Player.prototype.render = function(){
@@ -342,20 +326,11 @@ Player.prototype.reset = function(){
     this.y = 410;
 };
 
-// Player.prototype.checkReached = function(){
-//     if (this.y <= 0){
-//         this.score++;
-//         //this.renderScore();
-//         this.reset();
-//     }
-// };
-
+//render heart for a number of life on the right top corner
 Player.prototype.renderLife = function(){
     if (this.life === 0){
-        // game.gameOver();
         game.stop = true;
-    }
-
+    };
 
     var imgX = 470;
     for (var i=0; i<this.life; i++){
@@ -364,11 +339,12 @@ Player.prototype.renderLife = function(){
     }
 };
 
-
+//render score
 Player.prototype.renderScore = function(){
     document.getElementById("score").innerHTML = 'Score : ' + this.score;
 }
 
+//actions at key stroke
 Player.prototype.handleInput = function(key) {
     switch(key){
         case 'up':
@@ -395,55 +371,51 @@ Player.prototype.handleInput = function(key) {
                 console.log("x :" + this.x + "y: " + this.y);
             }
             break;
-
+        case 'quit':
+            // location.reload();
+            game.stop = true;
+            break;
     }
 };
 
 var Obstacles = function(){
     this.sprite = 'images/Rock.png';
 
-    //available coordinate of x and y for items
-    //this.obstacleX = [0,100,200,300,400];
-    //this.obstacleY =  [60,145,230];
-
     //set random x position for item
-    // this.x = this.obstacleX[this.randomInt(0,this.obstacleX.length-1)];
     this.x = this.gridX[this.randomInt(0,this.gridX.length-1)];
     //set random y position for item
-    // this.y = this.obstacleY[this.randomInt(0,this.obstacleY.length-1)];
     this.y = this.gridY[this.randomInt(0,this.gridY.length-1)];
 };
+// Set Obstacles to inherit properties from Drawable
 Obstacles.prototype = new Drawable();
-
-Obstacles.prototype.update = function(){
-
-}
 
 // Draw the enemy on the screen, required method for game
 Obstacles.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    //ctx.drawImage(Resources.get(this.rockImage), this.x, this.y);
 };
 
-//pass obstacles' location (double array) so that items does not overlay obstacles.
+//@param obLoc : pass obstacles' location (double array) so that items does not overlay obstacles.
 var Items = function(obLoc){
-    //this.itemImages = ['images/Heart.png', 'images/gem-blue.png', 'images/gem-green.png', 'images/Key.png', 'images/Star.png'];
     this.itemImages = [
-        "images/gem-blue.png",
         "images/Star.png",
+        "images/gem-blue.png",
         "images/Heart.png",
         "images/treasureChest.png"
     ];
+    //select one item at random
     this.itemSelector();
+    //set location of item at which rocks are not located
     this.setLocOfItems(obLoc);
 };
+// Set Items to inherit properties from Drawable
 Items.prototype = new Drawable();
 
+//Item selector among star, gem-blue, heart, treasureChest
 Items.prototype.itemSelector = function(){
    this.sprite = this.itemImages[this.randomInt(0, this.itemImages.length-1)];
-   //this.sprite = 'images/temp/download.png';
-}
+};
 
+//set location of Items where rocks do not exist
 Items.prototype.setLocOfItems = function(obLoc){
     var tempX;
     var tempY;
@@ -465,10 +437,11 @@ Items.prototype.setLocOfItems = function(obLoc){
         }
     }
 
+    //set current location of Item
     this.x = tempX;
     this.y = tempY;
 
-}
+};
 
 // Draw the enemy on the screen, required method for game
 Items.prototype.render = function() {
@@ -480,8 +453,10 @@ var Fish = function(){
     this.sprite = 'images/Fish.png';
     this.reset();
 }
+// Set Fish to inherit properties from Drawable
 Fish.prototype = new Drawable();
 
+// Set location of fish on water when player reach fish
 Fish.prototype.reset = function(){
     this.x = this.gridX[this.randomInt(0,this.gridX.length-1)];
     this.y = -20;
