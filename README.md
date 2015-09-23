@@ -5,6 +5,8 @@ Title : Fisherman
 
 Description : Fisherman should reach fish on river(water on the map) to get points. He can get some items for some spells and additional points on the way to water. 
 
+<a href ="http://vascode.github.io/FEND_Arcade/">DEMO</a>
+
 - used rubric: https://www.udacity.com/course/viewer#!/c-ud015/l-3072058665/m-3072588797
 - reference : 
 <ul>
